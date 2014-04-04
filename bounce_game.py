@@ -22,6 +22,7 @@ class Ball:
         self.y = -3
         self.canvas_height = self.canvas.winfo_height()
         self.canvas_width = self.canvas.winfo_width()
+        self.hit_bottom = False
         
     def draw(self):
         self.canvas.move(self.id, self.x, self.y)
@@ -29,7 +30,7 @@ class Ball:
         if pos[1] <= 0:
             self.y = 3
         if pos[3] >= self.canvas_height:
-            self.y = -3
+            self.hit_bottom = True
         if self.hit_schläger(pos) == True:
             self.y = -3
         if pos[0] <= 0:
@@ -59,7 +60,12 @@ class Schläger:
         
     def nach_rechts(self, evt):
         self.x = 2
-        
+    def triff_schläger(self, pos):
+        schläger_pos = self.canvas.coords(self.schläger.id)
+        if pos[2] >= schläger_pos[0] and pos[0] <=[2]:
+            if pos[3] >= schläger_pos[1] and pos[3] <= schläger_pos[3]:
+                return True
+
     def draw(self):
         self.canvas.move(self.id, self.x, 0)
         pos = self.canvas.coords(self.id)
@@ -72,8 +78,9 @@ schläger = Schläger(canvas, 'blue')
 ball = Ball(canvas, schläger, 'red')
 
 while 1:
-    ball.draw()
-    schläger.draw()
+    if ball.hit_bottom == False:
+        ball.draw()
+        schläger.draw()
     tk.update_idletasks()
     tk.update()
     time.sleep(0.01)
